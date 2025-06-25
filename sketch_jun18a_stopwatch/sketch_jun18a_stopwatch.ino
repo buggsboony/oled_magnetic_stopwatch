@@ -18,14 +18,14 @@ void setup()
     magnetIsClose = false;
     Serial.println("Initialisation: Aimant LOIN (switch passant).");
   }
-
+  resetCountDown(); //peut eêtre utile
   Serial.println("Programme pret. Attente de changement d'etat de l'aimant.");
 
-  Serial.println("END SETUP");
-      delay(2111);
-     Serial.println("go to sleep");
-       delay(500);
-     goToSleep();
+  // Serial.println("END SETUP");
+  //     delay(200);
+  //    Serial.println("go to sleep");
+  //      delay(550);
+  //    //if(okToSleep) .goToSleep();
      
  //2025-06-25 00:19:26 - Prepare Screen
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
@@ -35,39 +35,71 @@ void setup()
   }
   // Clear the buffer
   display.clearDisplay();
+  //Pre-init 
+  screenIsOf = false;
+  okToSleep = magnetIsClose; //Sleep when magnet is closed
+   
 }//setup
+
 
 
 void loop() 
 {
   if(verboz>1) Serial.println("Start loop");
+ 
+
     if(first)
     {
       display.setTextSize(4);             // Draw 2X-scale text
       display.setTextColor(SSD1306_WHITE,SSD1306_BLACK ); // Draw 'inverse' text
       first=false;
     }
+
+    //2025-06-25 13:04:12 - Allowed to sleep
+    if(okToSleep) 
+    {
+      Serial.println("it's OK to sleep!");    
+      //éteindre l'écran
+      Serial.println("Turn OFF Screen");
+      if(!screenIsOf)
+      {
+        display.ssd1306_command(SSD1306_DISPLAYOFF);
+        screenIsOf = true;
+      }
+      goToSleep("FROM LOOP");
+    }else
+    {
+      if(screenIsOf)
+      {
+        display.ssd1306_command(SSD1306_DISPLAYON);    
+        screenIsOf = false;
+        display.display();
+      }
+      Serial.println(" Not OK to sleep :(  "); 
+    }
+   
     if(verboz>1) Serial.println("Reset Cursor position 0,0");
     display.setCursor(0, 0);     // Re-Start at top-left corner
     display.print("  ");
     if(verboz>1) Serial.print("Print string number ");
     //Convert to string
-    n--; //Decrement
+    nCountDown--; //Decrement
 
     //Limit
-    if(n<0)
+    if(nCountDown<11)
     {
-      n=0;
+      nCountDown=11;
       zeroReached++;
-      delayTime=200; //Blink rapidly
+      delayTime=200; //Blink rapidlzy
     }
-    sprintf(sNumber,"%02d",n,3);
+    sprintf(sNumber,"%02d",nCountDown,3);
     //Pair ou impair
     if( (zeroReached>0) && ((zeroReached % 2) ==0)  )
     {
       if(verboz>1) Serial.print("modulo =");      
       //sprintf(sNumber,"--",n,3);  
-      sprintf(sNumber,"  ",n,3);  
+      sprintf(sNumber,"  ",nCountDown,3);  
+      //Serial.println("Go to sleep in loop ! ") ; delay(1100);       goToSleep();
     }
 
     Serial.println(sNumber);
@@ -77,6 +109,7 @@ void loop()
     if(verboz>1) Serial.println("Display!");
     display.display();//Display on screen
     delay(delayTime); 
+
 }//loop
 
  
