@@ -75,7 +75,7 @@ void loop()
         screenIsOf = false;
         display.display();
       }
-      Serial.println(" Not OK to sleep :(  "); 
+      Serial.println(" Not OK to sleep "); 
     }
    
     if(verboz>1) Serial.println("Reset Cursor position 0,0");
@@ -86,9 +86,9 @@ void loop()
     nCountDown--; //Decrement
 
     //Limit
-    if(nCountDown<11)
+    if(nCountDown<0)
     {
-      nCountDown=11;
+      nCountDown=0;
       zeroReached++;
       delayTime=200; //Blink rapidlzy
     }

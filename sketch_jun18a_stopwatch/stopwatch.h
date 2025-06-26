@@ -28,7 +28,7 @@ volatile unsigned long lastDebounceTime = 0;  // Dernière fois que l'interrupte
 const unsigned long debounceDelay = 8;        // Délai de débouncage en millisecondes (8ms est largement suffisant)
 
 char sNumber[50];
-short nMaxCountDown = 60 - 35, zeroReached = 0;
+short nMaxCountDown = 60 - 0, zeroReached = 0;
 short nCountDown = nMaxCountDown;
 int delayTime = 999;
 bool first = true;
@@ -59,7 +59,7 @@ void handleReedSwitch() {
     // Cela signifie que l'ILS est passé de fermé à ouvert.
     // D3 est tirée à HIGH par la pull-up, donc l'aimant est proche.
     magnetIsClose = true;
-    Serial.println("INTERRUPTION: Aimant DETECTE (courant ne passe PLUS).");
+    Serial.println("INTERRUPTION: Aimant PRESENT (courant ne passe PLUS).");
     okToSleep = true;
     resetCountDown();
   } else {  // La pin est passée à LOW
